@@ -28,6 +28,7 @@
       <div class="flex flex-col gap-1">
         <label for="fact" class="font-medium text-slate-700">Incident Fact</label>
         <textarea id="fact" name="fact" placeholder="Add an incident fact here..." required class="rounded-md border border-slate-300 px-3 py-2 text-base bg-slate-50 min-h-[48px] max-h-[120px] resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+        <div class="text-xs text-slate-400 mt-1">Supports <a href="https://commonmark.org/help/" target="_blank" class="underline">Markdown</a> formatting.</div>
       </div>
       <button type="submit" class="self-end bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-md px-6 py-2 transition-colors">Add Entry</button>
     </form>
@@ -41,8 +42,10 @@
     <div class="instructions text-center text-slate-400 text-base mt-6">
       <div>Entries are saved in your browser. Add facts with a timestamp to build your incident timeline.<br>Entries are always shown in chronological order.</div>
       <div class="mt-2 text-xs">v1.0 — Local-only, no sign-in required.</div>
+      <div class="mt-6 text-xs text-slate-300">Vibe Code experiment by Greg G.</div>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

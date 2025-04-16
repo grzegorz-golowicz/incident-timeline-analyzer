@@ -47,7 +47,7 @@ function renderTimeline(entries) {
     const timeStr = entry.time ? formatTime(entry.time) : '[No time]';
     div.innerHTML = `
       <div class="font-mono text-slate-500 text-base mb-1">${timeStr}</div>
-      <div class="text-slate-800 text-lg whitespace-pre-line">${escapeHtml(entry.fact)}</div>
+      <div class="text-slate-800 text-lg prose prose-slate max-w-none">${window.DOMPurify ? DOMPurify.sanitize(marked.parse(entry.fact || '')) : marked.parse(entry.fact || '')}</div>
     `;
     timeline.appendChild(div);
   });
