@@ -31,13 +31,13 @@
       </div>
       <button type="submit" class="self-end bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-md px-6 py-2 transition-colors">Add Entry</button>
     </form>
+    <div id="timeline" class="flex flex-col gap-4 mb-8"></div>
     <div class="flex flex-row gap-4 mb-6">
       <button id="export-btn" type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Export Timeline</button>
       <button id="import-btn" type="button" class="bg-slate-500 hover:bg-slate-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Import Timeline</button>
       <button id="clear-btn" type="button" class="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Clear Timeline</button>
       <input id="import-file" type="file" accept="application/json" class="hidden" />
     </div>
-    <div id="timeline" class="flex flex-col gap-4 mb-8"></div>
     <div class="instructions text-center text-slate-400 text-base mt-6">
       <div>Entries are saved in your browser. Add facts with a timestamp to build your incident timeline.<br>Entries are always shown in chronological order.</div>
       <div class="mt-2 text-xs">v1.0 — Local-only, no sign-in required.</div>
