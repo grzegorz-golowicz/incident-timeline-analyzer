@@ -1,0 +1,159 @@
+const STORAGE_KEY = 'incident_timeline_entries';
+
+function loadEntries() {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return [];
+    const arr = JSON.parse(data);
+    if (!Array.isArray(arr)) return [];
+    return arr;
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function parseCustomDate(str) {
+  // Format: yyyy-mm-dd HH:mm:ss.SSS
+  const m = str.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})\.(\d{3})$/);
+  if (!m) return NaN;
+  return new Date(`${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}.${m[7]}Z`).getTime();
+}
+
+function sortEntries(entries) {
+  return entries.slice().sort((a, b) => {
+    const tA = parseCustomDate(a.time);
+    const tB = parseCustomDate(b.time);
+    if (isNaN(tA) && isNaN(tB)) return 0;
+    if (isNaN(tA)) return 1;
+    if (isNaN(tB)) return -1;
+    return tA - tB;
+  });
+}
+
+function renderTimeline(entries) {
+  const timeline = document.getElementById('timeline');
+  timeline.innerHTML = '';
+  if (!entries.length) {
+    timeline.innerHTML = '<div class="text-slate-400 text-center mt-6">No entries yet.</div>';
+    return;
+  }
+  entries.forEach(entry => {
+    const div = document.createElement('div');
+    div.className = 'rounded-lg bg-slate-100 px-6 py-3 shadow flex flex-col gap-1';
+    const timeStr = entry.time ? formatTime(entry.time) : '[No time]';
+    div.innerHTML = `
+      <div class="font-mono text-slate-500 text-base mb-1">${timeStr}</div>
+      <div class="text-slate-800 text-lg whitespace-pre-line">${escapeHtml(entry.fact)}</div>
+    `;
+    timeline.appendChild(div);
+  });
+}
+
+function formatTime(timeStr) {
+  // Always show as yyyy-mm-dd HH:mm:ss.SSS (if possible)
+  const m = timeStr.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}\.\d{3})$/);
+  if (m) return `${m[1]} ${m[2]}`;
+  // fallback: try to parse
+  const t = parseCustomDate(timeStr);
+  if (!isNaN(t)) {
+    const d = new Date(t);
+    const pad = n => n.toString().padStart(2, '0');
+    const ms = d.getUTCMilliseconds().toString().padStart(3, '0');
+    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}.${ms}`;
+  }
+  return timeStr;
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, function(tag) {
+    const chars = {
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    };
+    return chars[tag] || tag;
+  });
+}
+
+// Export/Import functionality
+function downloadTimeline() {
+  const entries = loadEntries();
+  const blob = new Blob([JSON.stringify(entries, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'incident-timeline.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    a.remove();
+  }, 100);
+}
+
+function triggerImport() {
+  document.getElementById('import-file').value = '';
+  document.getElementById('import-file').click();
+}
+
+function handleImportFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      const data = JSON.parse(event.target.result);
+      if (!Array.isArray(data)) throw new Error('Not an array');
+      // Optionally validate structure
+      saveEntries(data);
+      renderTimeline(sortEntries(data));
+    } catch (err) {
+      alert('Invalid JSON file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Form submission
+window.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('entry-form');
+  const timeInput = document.getElementById('time');
+  const errorDiv = document.getElementById('time-error');
+  renderTimeline(sortEntries(loadEntries()));
+
+  document.getElementById('export-btn').addEventListener('click', downloadTimeline);
+  document.getElementById('import-btn').addEventListener('click', triggerImport);
+  document.getElementById('import-file').addEventListener('change', handleImportFile);
+  document.getElementById('clear-btn').addEventListener('click', function() {
+    if (window.confirm('Are you sure you want to clear the entire timeline? This cannot be undone.')) {
+      saveEntries([]);
+      renderTimeline([]);
+    }
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const time = timeInput.value.trim();
+    const fact = document.getElementById('fact').value.trim();
+    const valid = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})\.(\d{3})$/.test(time);
+    if (!valid) {
+      errorDiv.style.display = 'block';
+      timeInput.focus();
+      return;
+    } else {
+      errorDiv.style.display = 'none';
+    }
+    if (!fact) return;
+    const newEntry = { time, fact };
+    let entries = loadEntries();
+    entries.push(newEntry);
+    entries = sortEntries(entries);
+    saveEntries(entries);
+    renderTimeline(entries);
+    // Reset form
+    form.reset();
+    timeInput.focus();
+  });
+});

@@ -1,0 +1,90 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  color: #222;
+}
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 32px 24px 24px 24px;
+}
+h1 {
+  margin-top: 0;
+  font-size: 2rem;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: #2d4059;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+input[type="text"], textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #f4f6f8;
+  resize: none;
+}
+textarea {
+  min-height: 48px;
+  max-height: 120px;
+}
+button {
+  align-self: flex-end;
+  background: #2d4059;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+button:hover {
+  background: #354a68;
+}
+.timeline {
+  margin-top: 8px;
+}
+.timeline-entry {
+  background: #f4f6f8;
+  border-radius: 5px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.entry-time {
+  font-size: 0.98rem;
+  color: #607d8b;
+  margin-bottom: 6px;
+  font-family: 'Menlo', monospace;
+}
+.entry-fact {
+  font-size: 1.08rem;
+  color: #263238;
+  white-space: pre-line;
+}
+.instructions {
+  margin-top: 30px;
+  font-size: 0.97rem;
+  color: #888;
+  text-align: center;
+}
+@media (max-width: 700px) {
+  .container { padding: 20px 4vw; }
+}

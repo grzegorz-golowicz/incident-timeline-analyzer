@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Incident Timeline Analyzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-3xl mx-auto mt-10 mb-8 bg-white rounded-xl shadow-lg p-8 sm:p-10">
+    <h1 class="text-3xl font-bold text-center text-slate-800 mb-8 tracking-tight">Incident Timeline Analyzer</h1>
+    <form id="entry-form" autocomplete="off" class="flex flex-col gap-6 mb-10">
+      <div class="flex flex-col gap-1">
+        <label for="time" class="font-medium text-slate-700">Time <span class="font-normal text-sm text-slate-400">(yyyy-mm-dd HH:mm:ss.SSS)</span></label>
+        <input type="text" id="time" name="time" placeholder="2025-04-16 14:30:15.123" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}" required autocomplete="off" class="rounded-md border border-slate-300 px-3 py-2 text-base bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <div id="time-error" class="text-red-600 text-sm mt-1 hidden">Invalid format. Use yyyy-mm-dd HH:mm:ss.SSS</div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="fact" class="font-medium text-slate-700">Incident Fact</label>
+        <textarea id="fact" name="fact" placeholder="Add an incident fact here..." required class="rounded-md border border-slate-300 px-3 py-2 text-base bg-slate-50 min-h-[48px] max-h-[120px] resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+      </div>
+      <button type="submit" class="self-end bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-md px-6 py-2 transition-colors">Add Entry</button>
+    </form>
+    <div class="flex flex-row gap-4 mb-6">
+      <button id="export-btn" type="button" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Export Timeline</button>
+      <button id="import-btn" type="button" class="bg-slate-500 hover:bg-slate-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Import Timeline</button>
+      <button id="clear-btn" type="button" class="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Clear Timeline</button>
+      <input id="import-file" type="file" accept="application/json" class="hidden" />
+    </div>
+    <div id="timeline" class="flex flex-col gap-4 mb-8"></div>
+    <div class="instructions text-center text-slate-400 text-base mt-6">
+      <div>Entries are saved in your browser. Add facts with a timestamp to build your incident timeline.<br>Entries are always shown in chronological order.</div>
+      <div class="mt-2 text-xs">v1.0 — Local-only, no sign-in required.</div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
