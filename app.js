@@ -126,10 +126,17 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('export-btn').addEventListener('click', downloadTimeline);
   document.getElementById('import-btn').addEventListener('click', triggerImport);
   document.getElementById('import-file').addEventListener('change', handleImportFile);
+  console.log('Attaching clear button handler');
   document.getElementById('clear-btn').addEventListener('click', function() {
+    console.log('Clear button clicked!');
     if (window.confirm('Are you sure you want to clear the entire timeline? This cannot be undone.')) {
-      saveEntries([]);
+      localStorage.removeItem(STORAGE_KEY);
       renderTimeline([]);
+      document.getElementById('entry-form').reset();
+      document.getElementById('time').focus();
+      alert('Timeline cleared!');
+      console.log('Timeline cleared, reloading page for sync.');
+      window.location.reload();
     }
   });
 
