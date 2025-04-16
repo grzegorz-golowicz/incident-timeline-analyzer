@@ -41,14 +41,26 @@ function renderTimeline(entries) {
     timeline.innerHTML = '<div class="text-slate-400 text-center mt-6">No entries yet.</div>';
     return;
   }
-  entries.forEach(entry => {
+  entries.forEach((entry, idx) => {
     const div = document.createElement('div');
-    div.className = 'rounded-lg bg-slate-100 px-6 py-3 shadow flex flex-col gap-1';
+    div.className = 'rounded-lg bg-slate-100 px-6 py-3 shadow flex flex-col gap-1 relative';
     const timeStr = entry.time ? formatTime(entry.time) : '[No time]';
     div.innerHTML = `
+      <button class="delete-entry-btn absolute top-2 right-2 text-xs bg-red-500 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center" title="Delete entry" aria-label="Delete entry">&times;</button>
       <div class="font-mono text-slate-500 text-base mb-1">${timeStr}</div>
       <div class="text-slate-800 text-lg prose prose-slate max-w-none">${window.DOMPurify ? DOMPurify.sanitize(marked.parse(entry.fact || '')) : marked.parse(entry.fact || '')}</div>
     `;
+    // Add delete handler
+    const btn = div.querySelector('.delete-entry-btn');
+    btn.addEventListener('click', () => {
+      if (window.confirm('Delete this entry?')) {
+        let entries = loadEntries();
+        // Use time+fact as identifier
+        entries = entries.filter(e => !(e.time === entry.time && e.fact === entry.fact));
+        saveEntries(entries);
+        renderTimeline(entries);
+      }
+    });
     timeline.appendChild(div);
   });
 }
