@@ -11,6 +11,16 @@
     <h1 class="text-3xl font-bold text-center text-slate-800 mb-8 tracking-tight">Incident Timeline Analyzer</h1>
     <form id="entry-form" autocomplete="off" class="flex flex-col gap-6 mb-10">
       <div class="flex flex-col gap-1">
+        <div class="flex flex-row gap-3 items-end mb-1">
+          <div class="flex flex-col">
+            <label for="picker-dt" class="text-sm text-slate-500">Pick date & time</label>
+            <input type="datetime-local" id="picker-dt" class="rounded-md border border-slate-300 px-2 py-1 text-base bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <div class="flex flex-col">
+            <label for="picker-ms" class="text-sm text-slate-500">Milliseconds</label>
+            <input type="number" id="picker-ms" min="0" max="999" value="0" class="rounded-md border border-slate-300 px-2 py-1 w-20 text-base bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+        </div>
         <label for="time" class="font-medium text-slate-700">Time <span class="font-normal text-sm text-slate-400">(yyyy-mm-dd HH:mm:ss.SSS)</span></label>
         <input type="text" id="time" name="time" placeholder="2025-04-16 14:30:15.123" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3}" required autocomplete="off" class="rounded-md border border-slate-300 px-3 py-2 text-base bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400" />
         <div id="time-error" class="text-red-600 text-sm mt-1 hidden">Invalid format. Use yyyy-mm-dd HH:mm:ss.SSS</div>

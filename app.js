@@ -123,6 +123,54 @@ window.addEventListener('DOMContentLoaded', () => {
   const errorDiv = document.getElementById('time-error');
   renderTimeline(sortEntries(loadEntries()));
 
+  // Picker sync logic
+  const pickerDt = document.getElementById('picker-dt');
+  const pickerMs = document.getElementById('picker-ms');
+
+  function pad(n, l=2) { return n.toString().padStart(l, '0'); }
+  function toTimeField(dtVal, msVal) {
+    if (!dtVal) return '';
+    // dtVal: '2025-04-16T14:30:15' or '2025-04-16T14:30'
+    const [date, time] = dtVal.split('T');
+    if (!date || !time) return '';
+    const [h, m, s] = time.split(':');
+    const sec = s || '00';
+    return `${date} ${pad(h)}:${pad(m)}:${pad(sec)}.${pad(msVal,3)}`;
+  }
+  function fromTimeField(val) {
+    // returns {dt, ms} or null
+    const m = val.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}):(\d{2}):(\d{2})\.(\d{3})$/);
+    if (!m) return null;
+    return {
+      dt: `${m[1]}T${m[2]}:${m[3]}:${m[4]}`,
+      ms: m[5]
+    };
+  }
+  pickerDt.addEventListener('change', () => {
+    timeInput.value = toTimeField(pickerDt.value, pickerMs.value);
+  });
+  pickerMs.addEventListener('input', () => {
+    timeInput.value = toTimeField(pickerDt.value, pickerMs.value);
+  });
+  timeInput.addEventListener('input', () => {
+    const parsed = fromTimeField(timeInput.value);
+    if (parsed) {
+      pickerDt.value = parsed.dt;
+      pickerMs.value = parsed.ms;
+    }
+  });
+  // On form reset, also reset pickers
+  document.getElementById('entry-form').addEventListener('reset', () => {
+    pickerDt.value = '';
+    pickerMs.value = '0';
+  });
+  // On page load, set pickers to match time field if possible
+  const parsed = fromTimeField(timeInput.value);
+  if (parsed) {
+    pickerDt.value = parsed.dt;
+    pickerMs.value = parsed.ms;
+  }
+
   document.getElementById('export-btn').addEventListener('click', downloadTimeline);
   document.getElementById('import-btn').addEventListener('click', triggerImport);
   document.getElementById('import-file').addEventListener('change', handleImportFile);
