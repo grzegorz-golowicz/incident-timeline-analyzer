@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Incident Timeline Analyzer</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="bg-gray-50 min-h-screen">
   <div class="max-w-3xl mx-auto mt-10 mb-8 bg-white rounded-xl shadow-lg p-8 sm:p-10">
@@ -38,6 +39,27 @@
       <button id="import-btn" type="button" class="bg-slate-500 hover:bg-slate-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Import Timeline</button>
       <button id="clear-btn" type="button" class="bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md px-5 py-2 transition-colors">Clear Timeline</button>
       <input id="import-file" type="file" accept="application/json" class="hidden" />
+    </div>
+    <!-- Analyze with AI Foldable Box -->
+    <div class="mb-6">
+      <button id="analyze-ai-btn" type="button" class="bg-green-300 hover:bg-green-800 text-white font-semibold rounded-md px-5 py-2 transition-colors w-full text-left flex items-center justify-between">
+        <span>Analyze with AI</span>
+        <svg id="ai-chevron" class="w-5 h-5 ml-2 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div id="ai-foldable" class="overflow-hidden transition-all duration-300 max-h-0 bg-slate-100 rounded-b-md px-4">
+        <label for="openai-key" class="block mt-4 mb-2 text-slate-700 font-medium">OpenAI API Key</label>
+        <input type="password" id="openai-key" class="w-full rounded-md border border-slate-300 px-3 py-2 text-base bg-slate-50 focus:outline-none focus:ring-2 focus:ring-green-400 mb-4" placeholder="sk-..." autocomplete="off" />
+
+<label for="ai-action" class="block mb-2 text-slate-700 font-medium">Select Action</label>
+<select id="ai-action" class="w-full rounded-md border border-slate-300 px-3 py-2 text-base bg-slate-50 focus:outline-none focus:ring-2 focus:ring-green-400 mb-4">
+  <option value="quick-summary">Quick Summary</option>
+  <option value="analyze-what-happened">Analyze What Happened</option>
+  <option value="short-explanation-manager">Short Explanation for Manager</option>
+  <option value="description-documentation">Description for Documentation</option>
+</select>
+<button id="ai-generate" type="button" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-md px-5 py-2 transition-colors mb-2">Generate</button>
+<div id="ai-result" class="prose mt-3 text-slate-700 text-base"></div>
+      </div>
     </div>
     <div class="instructions text-center text-slate-400 text-base mt-6">
       <div>Entries are saved in your browser. Add facts with a timestamp to build your incident timeline.<br>Entries are always shown in chronological order.</div>

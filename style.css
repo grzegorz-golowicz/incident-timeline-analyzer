@@ -5,6 +5,25 @@ body {
   padding: 0;
   color: #222;
 }
+
+#ai-foldable {
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  max-height: 0;
+  overflow: hidden;
+  display: block;
+}
+#ai-foldable.open {
+  display: block !important;
+  max-height: 200px;
+  padding-bottom: 1rem;
+}
+#ai-chevron {
+  transition: transform 0.3s;
+}
+#ai-chevron.rotated {
+  transform: rotate(180deg);
+}
+
 .container {
   max-width: 600px;
   margin: 40px auto;

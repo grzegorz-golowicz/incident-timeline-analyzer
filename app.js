@@ -200,6 +200,93 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // AI foldable toggle setup
+  const analyzeBtn = document.getElementById('analyze-ai-btn');
+  const aiFoldable = document.getElementById('ai-foldable');
+  const aiChevron = document.getElementById('ai-chevron');
+  const aiGenerateBtn = document.getElementById('ai-generate');
+  const aiResult = document.getElementById('ai-result');
+  const aiAction = document.getElementById('ai-action');
+  const aiKeyInput = document.getElementById('openai-key');
+
+  // Prompts for each action
+  const aiPrompts = {
+    'quick-summary': 'Give me a quick summary of this incident timeline.',
+    'analyze-what-happened': 'Analyze what happened in this incident timeline.',
+    'short-explanation-manager': 'Write a short, non-technical explanation for a manager about this incident timeline.',
+    'description-documentation': 'Write a detailed description suitable for documentation of this incident timeline.'
+  };
+
+  if (aiGenerateBtn && aiResult && aiAction && aiKeyInput) {
+    aiGenerateBtn.addEventListener('click', async () => {
+      const key = aiKeyInput.value.trim();
+      if (!key) {
+        aiResult.textContent = 'Please enter your OpenAI API key.';
+        return;
+      }
+      const action = aiAction.value;
+      const prompt = aiPrompts[action] || 'Summarize this incident timeline.';
+      // Get timeline facts
+      const entries = sortEntries(loadEntries());
+      if (!entries.length) {
+        aiResult.textContent = 'Timeline is empty.';
+        return;
+      }
+      const timelineText = entries.map(e => `- ${e.time}: ${e.fact}`).join('\n');
+      const fullPrompt = `${prompt}\n\nTimeline:\n${timelineText}`;
+      aiResult.textContent = 'Generating...';
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${key}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              { role: 'system', content: 'You are an expert incident analyst.' },
+              { role: 'user', content: fullPrompt }
+            ],
+            max_tokens: 512,
+            temperature: 0.7
+          })
+        });
+        if (!response.ok) {
+          const error = await response.json().catch(() => ({}));
+          aiResult.textContent = error.error?.message || 'OpenAI API error.';
+          return;
+        }
+        const data = await response.json();
+        const text = data.choices?.[0]?.message?.content || 'No response.';
+        aiResult.innerHTML = marked.parse(text);
+        // Expand container to fit new content
+        if (aiFoldable.classList.contains('open')) {
+          aiFoldable.style.maxHeight = aiFoldable.scrollHeight + 'px';
+        }
+      } catch (err) {
+        aiResult.textContent = 'Error: ' + err.message;
+      }
+    });
+  }
+
+  if (analyzeBtn && aiFoldable && aiChevron) {
+    analyzeBtn.setAttribute('aria-expanded', 'false');
+    analyzeBtn.addEventListener('click', () => {
+      const isOpen = aiFoldable.classList.toggle('open');
+      aiChevron.classList.toggle('rotated', isOpen);
+      // Expand/collapse using inline styles
+      if (isOpen) {
+        aiFoldable.style.maxHeight = aiFoldable.scrollHeight + 'px';
+        aiFoldable.style.paddingBottom = '1rem';
+      } else {
+        aiFoldable.style.maxHeight = '0';
+        aiFoldable.style.paddingBottom = '0';
+      }
+      analyzeBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     const time = timeInput.value.trim();
